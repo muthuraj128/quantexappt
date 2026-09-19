@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantexa (QUANTEX by HorizonX) — Project Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9541B;
+      --card-dark: #1E1F23;
+      --card-yellow: #FDE047;
+      --card-yellow-text: #111827;
+      --card-orange: #FF5500;
+      --text: #FFFFFF;
+      --text-sub: #9CA3AF;
+      --accent-emerald: #10B981;
+      --accent-rose: #EF4444;
+      --accent-cyan: #38BDF8;
+      --font-title: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body.theme-black {
+      --bg: #0A0A0C;
+      --card-dark: #16171B;
+      --text-sub: #9CA3AF;
+    }
+
+    body.theme-white {
+      --bg: #EAEBED;
+      --card-dark: #FFFFFF;
+      --text: #111827;
+      --text-sub: #4B5563;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      height: 100vh;
+      overflow: hidden;
+      transition: background-color 0.4s ease, color 0.4s ease;
+      user-select: none;
+    }
+
+    /* Top Control Bar */
+    .header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-title);
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .brand-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .theme-pill-group {
+      display: flex;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 4px;
+      border-radius: 9999px;
+    }
+
+    .theme-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: none;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-sub);
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn.active {
+      background: #FF5500;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(255, 85, 0, 0.4);
+    }
+
+    .nav-btn {
+      background: rgba(0,0,0,0.3);
+      color: #FFFFFF;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: #FF5500;
+      border-color: #FF5500;
+    }
+
+    /* Progress Bar */
+    .progress-bar-container {
+      position: fixed;
+      top: 65px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 101;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 12.5%;
+      background: var(--card-yellow);
+      transition: width 0.4s ease;
+    }
+
+    /* Presentation Slide Deck */
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 65px;
+    }
+
+    .slide {
+      position: absolute;
+      width: 85%;
+      max-width: 1280px;
+      height: calc(100vh - 130px);
+      opacity: 0;
+      transform: scale(0.92) translateY(30px);
+      pointer-events: none;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Slide Cards & Elements */
+    .slide-card {
+      background: var(--card-dark);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+    }
+
+    .yellow-card {
+      background: var(--card-yellow);
+      color: var(--card-yellow-text) !important;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .orange-card {
+      background: var(--card-orange);
+      color: #FFFFFF !important;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 15px 40px rgba(255, 85, 0, 0.3);
+    }
+
+    .slide-title {
+      font-family: var(--font-title);
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .slide-subtitle {
+      font-size: 16px;
+      color: var(--text-sub);
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature-box {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .feature-title {
+      font-family: var(--font-title);
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    .pill-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .pill-orange { background: #FF5500; color: #FFFFFF; }
+    .pill-yellow { background: #FDE047; color: #111827; }
+    .pill-emerald { background: #10B981; color: #FFFFFF; }
+
+    /* Bottom Navigation Controls */
+    .footer-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(0,0,0,0.2);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .horizon-pagination-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFFFFF;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      color: #111827;
+    }
+
+    body.theme-black .horizon-pagination-bar {
+      background: #1E1F23;
+      color: #FFFFFF;
+    }
+
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .page-btn.active {
+      background: #111827;
+      color: #FFFFFF;
+    }
+
+    body.theme-black .page-btn.active {
+      background: #FF5500;
+      color: #FFFFFF;
+    }
+
+    .page-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: #6B7280;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-arrow:hover {
+      color: #111827;
+      background: rgba(0,0,0,0.05);
+    }
+
+    /* Keyframe Animations */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.05); }
+    }
+
+    .pulse-glow {
+      animation: pulseGlow 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="header-bar">
+    <div class="brand">
+      <span>QUANTEX</span>
+      <span class="brand-badge">by HorizonX</span>
+    </div>
+    <div class="controls">
+      <div class="theme-pill-group">
+        <button class="theme-btn active" onclick="setTheme('orange')">🟠 Orange</button>
+        <button class="theme-btn" onclick="setTheme('black')">🌑 Black</button>
+        <button class="theme-btn" onclick="setTheme('white')">⚪ White</button>
+      </div>
+      <button class="nav-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    </div>
+  </div>
+
+  <!-- Top Progress Bar -->
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+
+  <!-- Main Presentation Deck -->
+  <div class="deck">
+
+    <!-- Slide 1: Title Slide -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-card pulse-glow" style="text-align: center; padding: 60px 40px;">
+        <span class="pill-badge pill-orange">Quantitative Financial Intelligence Engine</span>
+        <h1 class="slide-title" style="font-size: 56px; margin-top: 10px;">QUANTEXA</h1>
+        <h3 style="font-size: 20px; color: var(--card-yellow); font-weight: 800; text-transform: uppercase; margin-bottom: 20px;">
+          QUANTEX by HorizonX Architecture & System Deck
+        </h3>
+        <p style="font-size: 15px; color: var(--text-sub); max-width: 720px; margin: 0 auto 30px; line-height: 1.6;">
+          An advanced multi-asset quantitative research platform integrating Twelve Data real-time REST API data, realistic strategy backtesting simulation, cross-asset Pearson correlation matrices, and the HorizonX design system.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px;">
+          <div class="yellow-card" style="padding: 16px 24px; text-align: center; border-radius: 9999px;">
+            <strong style="font-size: 20px; font-family: var(--font-mono); font-weight: 900;">12+ Asset Classes</strong>
+          </div>
+          <div class="orange-card" style="padding: 16px 24px; text-align: center; border-radius: 9999px;">
+            <strong style="font-size: 20px; font-family: var(--font-mono); font-weight: 900;">4 Quant Strategies</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: Executive Summary & Core Mission -->
+    <div class="slide" id="slide-2">
+      <div class="slide-card">
+        <span class="pill-badge pill-yellow">Executive Summary</span>
+        <h2 class="slide-title">System Mission & Vision</h2>
+        <p class="slide-subtitle">Bridging institutional quantitative research tools with modern high-contrast design.</p>
+        
+        <div class="grid-3">
+          <div class="feature-box">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-title">Real-Time Twelve Data API</div>
+            <div class="feature-desc">Fetches live OHLCV price action across Equities (NVDA, AAPL, MSFT), Crypto (BTC/USD, ETH/USD), and Commodity ETFs with SQLite3 caching.</div>
+          </div>
+          <div class="feature-box">
+            <div class="feature-icon">🎯</div>
+            <div class="feature-title">Strict Date Bounds Capping</div>
+            <div class="feature-desc">Guarantees zero future date leaks by capping end dates to real-world current date and aligning Recharts time-series graphs perfectly.</div>
+          </div>
+          <div class="feature-box">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">Realistic Backtest Engine</div>
+            <div class="feature-desc">Simulates trading strategies with commission fees in bps, equity position sizing, trade execution logs, and benchmark outperformance (Alpha).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Technology Architecture -->
+    <div class="slide" id="slide-3">
+      <div class="slide-card">
+        <span class="pill-badge pill-orange">Tech Stack</span>
+        <h2 class="slide-title">System Architecture</h2>
+        <p class="slide-subtitle">Decoupled full-stack architecture built for high performance and low latency.</p>
+        
+        <div class="grid-2">
+          <div class="feature-box">
+            <div class="feature-title" style="color: var(--accent-cyan); font-size: 20px;">Frontend Stack</div>
+            <ul style="list-style: none; margin-top: 12px; font-size: 13px; line-height: 2;">
+              <li>• <strong>React 18 & Vite:</strong> Lightning fast component rendering</li>
+              <li>• <strong>Recharts Engine:</strong> Custom styled time-series & area charts</li>
+              <li>• <strong>HorizonX CSS System:</strong> Theme CSS variables & pill components</li>
+              <li>• <strong>i18n Multi-language:</strong> English, Tamil, Hindi translation context</li>
+              <li>• <strong>Lucide Icons:</strong> Sleek vector micro-icons</li>
+            </ul>
+          </div>
+          <div class="feature-box">
+            <div class="feature-title" style="color: var(--card-yellow); font-size: 20px;">Backend Stack</div>
+            <ul style="list-style: none; margin-top: 12px; font-size: 13px; line-height: 2;">
+              <li>• <strong>FastAPI (Python 3.10):</strong> High-concurrency REST API engine</li>
+              <li>• <strong>Pandas & NumPy:</strong> Fast matrix & indicator computations</li>
+              <li>• <strong>SciPy:</strong> Risk & volatility metrics calculation</li>
+              <li>• <strong>SQLite3 Cache:</strong> Persistent market data storage</li>
+              <li>• <strong>Pytest Suite:</strong> Automated unit testing coverage</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Key Functional Modules -->
+    <div class="slide" id="slide-4">
+      <div class="slide-card">
+        <span class="pill-badge pill-emerald">Modules</span>
+        <h2 class="slide-title">Platform Functional Modules</h2>
+        <p class="slide-subtitle">Four core pillars driving end-to-end quantitative financial analysis.</p>
+
+        <div class="grid-4">
+          <div class="feature-box">
+            <div class="feature-title" style="font-size: 15px;">1. Market Data</div>
+            <div class="feature-desc" style="font-size: 12px; margin-top: 6px;">Twelve Data REST API, SQLite caching, ticker normalization (BTC/USD, GLD, USO).</div>
+          </div>
+          <div class="feature-box">
+            <div class="feature-title" style="font-size: 15px;">2. Technical Indicators</div>
+            <div class="feature-desc" style="font-size: 12px; margin-top: 6px;">Fast & Slow SMA/EMA, Golden Cross & Death Cross crossover signal detection.</div>
+          </div>
+          <div class="feature-box">
+            <div class="feature-title" style="font-size: 15px;">3. Strategy Simulation</div>
+            <div class="feature-desc" style="font-size: 12px; margin-top: 6px;">Backtesting engine supporting SMA, EMA, RSI Momentum, and Bollinger Mean Reversion.</div>
+          </div>
+          <div class="feature-box">
+            <div class="feature-title" style="font-size: 15px;">4. Cross-Asset Co-movement</div>
+            <div class="feature-desc" style="font-size: 12px; margin-top: 6px;">Pearson correlation matrix & 60-day rolling correlation trends across Equities, Crypto, Gold.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: HorizonX Design System & Contrast Themes -->
+    <div class="slide" id="slide-5">
+      <div class="slide-card">
+        <span class="pill-badge pill-yellow">Design System</span>
+        <h2 class="slide-title">HorizonX Aesthetic Framework</h2>
+        <p class="slide-subtitle">Inspired by HorizonX contrast modes, rounded cards, and bold typography.</p>
+
+        <div class="grid-3">
+          <div class="orange-card" style="padding: 24px;">
+            <div style="font-weight: 800; font-size: 18px; margin-bottom: 8px;">🟠 Horizon Orange</div>
+            <p style="font-size: 12px; opacity: 0.9;">Signature energetic orange backdrop (#FF5500) with matte dark cards and canary yellow highlight widgets.</p>
+          </div>
+          <div class="feature-box" style="background: #0A0A0C; padding: 24px;">
+            <div style="font-weight: 800; font-size: 18px; color: #FFFFFF; margin-bottom: 8px;">🌑 Black Contrast</div>
+            <p style="font-size: 12px; color: #9CA3AF;">Ultra-sleek dark background with radial grid line overlay and floating vibrant accent cards.</p>
+          </div>
+          <div class="yellow-card" style="padding: 24px;">
+            <div style="font-weight: 800; font-size: 18px; margin-bottom: 8px;">⚪ White Contrast</div>
+            <p style="font-size: 12px; opacity: 0.9;">Clean light grey backdrop (#EAEBED) with crisp white cards and canary yellow metrics.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Interactive Widget Component Set -->
+    <div class="slide" id="slide-6">
+      <div class="slide-card">
+        <span class="pill-badge pill-orange">Custom Widgets</span>
+        <h2 class="slide-title">Signature Widget Collection</h2>
+        <p class="slide-subtitle">Tailor-made UI widgets matching reference design components.</p>
+
+        <div class="grid-3">
+          <div class="yellow-card">
+            <div style="font-size: 12px; font-weight: 800; text-transform: uppercase;">USERS FOLLOWING / TOTAL RETURN</div>
+            <div style="font-family: var(--font-title); font-size: 36px; font-weight: 900; margin: 10px 0;">+952.76% ~</div>
+            <div style="font-size: 11px; font-weight: 700;">Canary Yellow Highlight Widget</div>
+          </div>
+
+          <div class="feature-box" style="text-align: center;">
+            <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-sub);">VOLATILITY GAUGE</div>
+            <div style="font-size: 32px; font-weight: 900; color: var(--card-yellow); margin: 10px 0;">18.4%</div>
+            <div style="font-size: 11px; color: var(--text-sub);">Speedometer Arc Gauge Meter</div>
+          </div>
+
+          <div class="orange-card">
+            <div style="font-size: 12px; font-weight: 800; text-transform: uppercase;">PROGRESS / SHARPE RATIO</div>
+            <div style="font-family: var(--font-title); font-size: 36px; font-weight: 900; margin: 10px 0;">2.45</div>
+            <div style="font-size: 11px; font-weight: 700;">Vibrant Orange Progress Card</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Backtest Simulation & Trade Log Execution -->
+    <div class="slide" id="slide-7">
+      <div class="slide-card">
+        <span class="pill-badge pill-emerald">Quantitative Engine</span>
+        <h2 class="slide-title">Strategy Backtest & Execution Logs</h2>
+        <p class="slide-subtitle">Institutional grade trade execution with slippage & commission modeling.</p>
+
+        <div class="grid-2">
+          <div class="feature-box">
+            <div class="feature-title">Simulation Parameters</div>
+            <ul style="list-style: none; font-size: 13px; line-height: 2; margin-top: 10px;">
+              <li>• <strong>Initial Equity:</strong> $100,000 USD default capital</li>
+              <li>• <strong>Transaction Fee:</strong> 10 bps (0.10%) per trade execution</li>
+              <li>• <strong>Position Sizing:</strong> 100% equity allocation per signal</li>
+              <li>• <strong>Benchmark Comparison:</strong> Buy & Hold benchmark calculation</li>
+            </ul>
+          </div>
+          <div class="feature-box">
+            <div class="feature-title">Trade Summary Metrics</div>
+            <ul style="list-style: none; font-size: 13px; line-height: 2; margin-top: 10px;">
+              <li>• <strong>Win Rate %:</strong> Percentage of profitable trade exits</li>
+              <li>• <strong>Profit Factor:</strong> Gross Profit divided by Gross Loss</li>
+              <li>• <strong>Trade Log Table:</strong> Individual trade entry/exit dates & PnL</li>
+              <li>• <strong>Underwater Drawdown:</strong> Peak-to-trough equity curve curve</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8: Summary & Key Takeaways -->
+    <div class="slide" id="slide-8">
+      <div class="slide-card" style="text-align: center; padding: 60px 40px;">
+        <span class="pill-badge pill-yellow">Summary</span>
+        <h2 class="slide-title" style="font-size: 48px;">QUANTEX by HorizonX</h2>
+        <p style="font-size: 16px; color: var(--text-sub); max-width: 680px; margin: 10px auto 30px; line-height: 1.6;">
+          A complete, production-grade quantitative financial analysis platform combining real-time API connectivity, rigorous date bounds verification, institutional strategy simulation, and a world-class HorizonX UI aesthetic.
+        </p>
+
+        <div style="display: flex; justify-content: center; gap: 16px;">
+          <a href="http://localhost:5173" target="_blank" class="nav-btn" style="padding: 12px 28px; font-size: 14px; text-decoration: none; background: #FF5500; border: none;">
+            🚀 Open Live QuantEX Application
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Control Bar (< 1 2 3 4 5 6 7 8 >) -->
+  <div class="footer-bar">
+    <div style="font-size: 12px; font-weight: 700; color: var(--text-sub);">
+      Slide <span id="currentSlideNum">1</span> of 8
+    </div>
+
+    <div class="horizon-pagination-bar">
+      <button class="page-arrow" onclick="prevSlide()">❮</button>
+      <button class="page-btn active" onclick="goToSlide(1)">1</button>
+      <button class="page-btn" onclick="goToSlide(2)">2</button>
+      <button class="page-btn" onclick="goToSlide(3)">3</button>
+      <button class="page-btn" onclick="goToSlide(4)">4</button>
+      <button class="page-btn" onclick="goToSlide(5)">5</button>
+      <button class="page-btn" onclick="goToSlide(6)">6</button>
+      <button class="page-btn" onclick="goToSlide(7)">7</button>
+      <button class="page-btn" onclick="goToSlide(8)">8</button>
+      <button class="page-arrow" onclick="nextSlide()">❯</button>
+    </div>
+
+    <div style="font-size: 11px; font-weight: 700; color: var(--text-sub);">
+      Use Arrow Keys ← → to navigate
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 8;
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        if (idx + 1 === currentSlide) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+
+      document.querySelectorAll('.page-btn').forEach((btn, idx) => {
+        if (idx + 1 === currentSlide) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      document.getElementById('currentSlideNum').innerText = currentSlide;
+      document.getElementById('progressFill').style.width = (currentSlide / totalSlides * 100) + '%';
+    }
+
+    function nextSlide() {
+      currentSlide = currentSlide < totalSlides ? currentSlide + 1 : 1;
+      updateSlide();
+    }
+
+    function prevSlide() {
+      currentSlide = currentSlide > 1 ? currentSlide - 1 : totalSlides;
+      updateSlide();
+    }
+
+    function goToSlide(num) {
+      currentSlide = num;
+      updateSlide();
+    }
+
+    function setTheme(mode) {
+      document.body.className = mode === 'orange' ? '' : 'theme-' + mode;
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    }
+
+    // Keyboard navigation listener
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    updateSlide();
+  </script>
+</body>
+</html>
